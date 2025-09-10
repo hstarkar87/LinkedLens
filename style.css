@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 15px;
+    background-color: #f9f9f9;
+    color: #333;
+    width: 250px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input, select {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #0073b1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #005582;
+}
+
+.job-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: #fff;
+}
+
+.job-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.job-details {
+  flex: 1;
+}
+
+.job-details h3 {
+  margin: 0;
+  font-size: 1.1em;
+}
+
+.job-details a {
+  text-decoration: none;
+  color: #0073b1; /* LinkedIn blue */
+}
+
+.job-details p,
+.job-details small {
+  margin: 4px 0;
+  color: #555;
+}

@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LinkedLens Filters</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>LinkedLens Job Filter</h2>
+    <form id="filterForm">
+        <label for="keyword">Keyword:</label>
+        <input type="text" id="keyword" name="keyword" placeholder="e.g. Developer">
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" placeholder="e.g. Remote">
+        <button type="submit">Apply Filters</button>
+    </form>
+    
+<h3>Filtered Jobs</h3>
+
+<div id="spinner" style="display: none; text-align: center; margin-top: 10px;">
+  <img src="spinner.gif" alt="Loading..." width="30">
+  <p>Loading jobs...</p>
+</div>
+
+  <div id="results">Loading...</div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

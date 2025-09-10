@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedLens",
+  "version": "1.0",
+  "description": "Filter LinkedIn job listings based on custom criteria.",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "*://www.linkedin.com/jobs/*",
+    "*://www.linkedin.com/jobs/collections/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.linkedin.com/jobs/*",
+        "*://www.linkedin.com/jobs/collections/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+}
