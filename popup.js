@@ -14,20 +14,26 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
     console.log("Current tab URL:", currentTab?.url);
 
     if (currentTab.url.includes("/jobs/collections/recommended")) {
-      chrome.tabs.sendMessage(currentTab.id, {
-        action: "getFilteredJobs",
-        keyword,
-        location
-      }, (jobs) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error sending message to content script:", chrome.runtime.lastError.message);
-          showError("Could not connect to LinkedIn jobs page. Try refreshing the tab.");
-          spinner.style.display = "none";
-          return;
-        }
+      // Inject content script before sending message
+      chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ["content.js"]
+      }, () => {
+        chrome.tabs.sendMessage(currentTab.id, {
+          action: "getFilteredJobs",
+          keyword,
+          location
+        }, (jobs) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error sending message to content script:", chrome.runtime.lastError.message);
+            showError("Could not connect to LinkedIn jobs page. Try refreshing the tab.");
+            spinner.style.display = "none";
+            return;
+          }
 
-        renderJobs(jobs);
-        spinner.style.display = "none";
+          renderJobs(jobs);
+          spinner.style.display = "none";
+        });
       });
     } else {
       chrome.runtime.sendMessage({
