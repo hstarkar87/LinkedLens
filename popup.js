@@ -37,10 +37,26 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
       });
     } else {
       chrome.runtime.sendMessage({
-        action: "scrapeHiddenJobs",
-        keyword,
-        location
-      });
+  action: "scrapeHiddenJobs",
+  keyword,
+  location
+}, (response) => {
+  if (chrome.runtime.lastError) {
+    console.error("Error:", chrome.runtime.lastError.message);
+    showError("Could not get jobs.");
+    spinner.style.display = "none";
+    return;
+  }
+
+  if (response?.jobs) {
+    renderJobs(response.jobs);
+  } else {
+    showError("No jobs found.");
+  }
+
+  spinner.style.display = "none";
+});
+
     }
   });
 });

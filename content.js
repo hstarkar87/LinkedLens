@@ -1,3 +1,4 @@
+
 function getFilteredJobs(message) {
   try {
     console.log("Filtering jobs with criteria:", message);
@@ -28,28 +29,23 @@ function getFilteredJobs(message) {
     return jobs.filter(job => job !== null);
   } catch (error) {
     console.error("Error filtering jobs:", error);
-    // Send error back to background
-    chrome.runtime.sendMessage({
-      action: "scrapeFailed",
-      error: error.message
-    });
     return [];
   }
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("Content script received message:", message);
   if (message.action === "getFilteredJobs") {
-    try {
-      const filteredJobs = getFilteredJobs(message);
-      sendResponse(filteredJobs);
-    } catch (err) {
-      console.error("Failed to process getFilteredJobs:", err);
-      chrome.runtime.sendMessage({
-        action: "scrapeFailed",
-        error: err.message
-      });
-      sendResponse([]);
-    }
-    return true;
+    (async () => {
+      try {
+        const filteredJobs = await getFilteredJobs(message);
+        sendResponse(filteredJobs);
+      } catch (err) {
+        console.error("Failed to process getFilteredJobs:", err);
+        sendResponse([]);
+      }
+    })();
+
+    return true; // Keep the message channel open for async response
   }
 });

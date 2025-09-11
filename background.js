@@ -1,11 +1,14 @@
 let pendingFilters = null;
 
+console.log("Background script loaded");
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "scrapeHiddenJobs") {
     pendingFilters = {
       keyword: message.keyword || "",
       location: message.location || ""
     };
+
     console.log("Opening new tab to scrape jobs with filters:", pendingFilters);
 
     chrome.tabs.create({
@@ -14,31 +17,51 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }, function (tab) {
       const tabId = tab.id;
 
-      chrome.tabs.onUpdated.addListener(function listener(updatedTabId, changeInfo, updatedTab) {
+      const listener = function (updatedTabId, changeInfo, updatedTab) {
         if (updatedTabId === tabId && changeInfo.status === "complete") {
           chrome.scripting.executeScript({
             target: { tabId },
             files: ["content.js"]
           }).then(() => {
-            // Send filters to content.js after injection
+            let responded = false;
+
             chrome.tabs.sendMessage(tabId, {
               action: "getFilteredJobs",
               ...pendingFilters
             }, response => {
+              responded = true;
+
               if (chrome.runtime.lastError) {
                 console.error("Failed to send message to content.js:", chrome.runtime.lastError.message);
-                // Optional: notify popup or log to storage
                 chrome.runtime.sendMessage({
                   action: "scrapeFailed",
                   error: chrome.runtime.lastError.message
                 });
               } else {
-                console.log("Message sent to content.js successfully:", response);
+                console.log("Filtered jobs received from content.js:", response);
+                chrome.runtime.sendMessage({
+                  action: "jobsScraped",
+                  jobs: response
+                });
               }
+
+              pendingFilters = null;
+              chrome.tabs.onUpdated.removeListener(listener);
+              chrome.tabs.remove(tabId);
             });
 
-            pendingFilters = null;
-            chrome.tabs.onUpdated.removeListener(listener);
+            // Fallback timeout
+            setTimeout(() => {
+              if (!responded) {
+                console.error("Timeout: No response from content.js");
+                chrome.runtime.sendMessage({
+                  action: "scrapeFailed",
+                  error: "Timeout waiting for response from content.js"
+                });
+                chrome.tabs.onUpdated.removeListener(listener);
+                chrome.tabs.remove(tabId);
+              }
+            }, 5000);
           }).catch(err => {
             console.error("Script injection failed:", err);
             chrome.runtime.sendMessage({
@@ -46,20 +69,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               error: err.message
             });
             chrome.tabs.onUpdated.removeListener(listener);
+            chrome.tabs.remove(tabId);
           });
         }
-      });
-    });
-  }
+      };
 
-  if (message.action === "jobsScraped") {
-    chrome.runtime.sendMessage({
-      action: "jobsScraped",
-      jobs: message.jobs
+      chrome.tabs.onUpdated.addListener(listener);
     });
 
-    if (sender.tab?.id) {
-      chrome.tabs.remove(sender.tab.id);
-    }
+    return true; // Required to keep the message channel open
   }
 });
