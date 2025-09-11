@@ -11,6 +11,7 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const currentTab = tabs[0];
+    console.log("Current tab URL:", currentTab?.url);
 
     if (currentTab.url.includes("/jobs/collections/recommended")) {
       chrome.tabs.sendMessage(currentTab.id, {
@@ -18,6 +19,13 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
         keyword,
         location
       }, (jobs) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error sending message to content script:", chrome.runtime.lastError.message);
+          showError("Could not connect to LinkedIn jobs page. Try refreshing the tab.");
+          spinner.style.display = "none";
+          return;
+        }
+
         renderJobs(jobs);
         spinner.style.display = "none";
       });
@@ -34,6 +42,12 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === "jobsScraped") {
     renderJobs(message.jobs);
+    document.getElementById("spinner").style.display = "none";
+  }
+
+  if (message.action === "scrapeFailed") {
+    console.error("Scrape failed:", message.error);
+    showError("LinkedLens couldn't scrape jobs. Please try again or refresh the LinkedIn tab.");
     document.getElementById("spinner").style.display = "none";
   }
 });
@@ -56,4 +70,9 @@ function renderJobs(jobs) {
   } else {
     container.innerText = "No jobs matched your filter.";
   }
+}
+
+function showError(message) {
+  const container = document.getElementById("results");
+  container.innerHTML = `<div class="error-message">${message}</div>`;
 }
