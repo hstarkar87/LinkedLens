@@ -1,3 +1,4 @@
+
 document.getElementById('filterForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
@@ -11,10 +12,11 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const currentTab = tabs[0];
-    console.log("Current tab URL:", currentTab?.url);
+    const url = currentTab?.url || "";
+    console.log("Current tab URL:", url);
 
-    if (currentTab.url.includes("/jobs/collections/recommended")) {
-      // Inject content script before sending message
+    if (url.includes("/jobs/collections/recommended")) {
+      // Scrape only recommended jobs
       chrome.scripting.executeScript({
         target: { tabId: currentTab.id },
         files: ["content.js"]
@@ -35,43 +37,53 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
           spinner.style.display = "none";
         });
       });
+    } else if (url.includes("/jobs")) {
+      // Scrape visible jobs from current tab
+      chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ["content.js"]
+      }, () => {
+        chrome.tabs.sendMessage(currentTab.id, {
+          action: "getFilteredJobs",
+          keyword,
+          location
+        }, (visibleJobs) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error sending message to content script:", chrome.runtime.lastError.message);
+            showError("Could not connect to LinkedIn jobs page. Try refreshing the tab.");
+            spinner.style.display = "none";
+            return;
+          }
+
+          // Scrape recommended jobs in background
+          chrome.runtime.sendMessage({
+            action: "scrapeHiddenJobs",
+            keyword,
+            location
+          });
+
+          // Wait for background response
+          chrome.runtime.onMessage.addListener(function listener(message) {
+            if (message.action === "jobsScraped") {
+              chrome.runtime.onMessage.removeListener(listener);
+              const combinedJobs = [...visibleJobs, ...message.jobs];
+              renderJobs(combinedJobs);
+              spinner.style.display = "none";
+            }
+
+            if (message.action === "scrapeFailed") {
+              chrome.runtime.onMessage.removeListener(listener);
+              showError("Failed to scrape recommended jobs.");
+              spinner.style.display = "none";
+            }
+          });
+        });
+      });
     } else {
-      chrome.runtime.sendMessage({
-  action: "scrapeHiddenJobs",
-  keyword,
-  location
-}, (response) => {
-  if (chrome.runtime.lastError) {
-    console.error("Error:", chrome.runtime.lastError.message);
-    showError("Could not get jobs.");
-    spinner.style.display = "none";
-    return;
-  }
-
-  if (response?.jobs) {
-    renderJobs(response.jobs);
-  } else {
-    showError("No jobs found.");
-  }
-
-  spinner.style.display = "none";
-});
-
+      showError("Please navigate to a LinkedIn jobs page to use LinkedLens.");
+      spinner.style.display = "none";
     }
   });
-});
-
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.action === "jobsScraped") {
-    renderJobs(message.jobs);
-    document.getElementById("spinner").style.display = "none";
-  }
-
-  if (message.action === "scrapeFailed") {
-    console.error("Scrape failed:", message.error);
-    showError("LinkedLens couldn't scrape jobs. Please try again or refresh the LinkedIn tab.");
-    document.getElementById("spinner").style.display = "none";
-  }
 });
 
 function renderJobs(jobs) {
