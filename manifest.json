@@ -3,7 +3,7 @@
   "name": "LinkedLens",
   "version": "1.0",
   "description": "Filter LinkedIn job listings based on custom criteria.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting","storage"],
   "host_permissions": [
     "*://www.linkedin.com/jobs/*",
     "*://www.linkedin.com/jobs/collections/*"

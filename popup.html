@@ -2,28 +2,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LinkedLens Filters</title>
+    <title>LinkedLens - Smarter LinkedIn Job Filters</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>LinkedLens Job Filter</h2>
+   
+<div class="header">
+ <img src="logo.jpg" alt="LinkedLens - Smarter LinkedIn Job Filters" class="logo" />
+</div>
     <form id="filterForm">
         <label for="keyword">Keyword:</label>
         <input type="text" id="keyword" name="keyword" placeholder="e.g. Developer">
         <label for="location">Location:</label>
-        <input type="text" id="location" name="location" placeholder="e.g. Remote">
+        <input type="text" id="location" name="location" placeholder="e.g. City">
         <button type="submit">Apply Filters</button>
-    </form>
-    
-<h3>Filtered Jobs</h3>
+    </form>   
+
 
 <div id="spinner" style="display: none; text-align: center; margin-top: 10px;">
   <img src="spinner.gif" alt="Loading..." width="30">
   <p>Loading jobs...</p>
 </div>
 
-  <div id="results">Loading...</div>
+  <div id="results"></div>    
 
-    <script src="popup.js"></script>
+<script src="popup.js"></script>
 </body>
 </html>
