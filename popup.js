@@ -4,6 +4,7 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
 
   const keyword = document.getElementById('keyword');
   const location = document.getElementById('location');
+  
   // Clear previous error styles
   keyword.classList.remove('error');
   location.classList.remove('error');
@@ -14,6 +15,8 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
     location.classList.add('error');    
     return; // Stop further execution
   }
+
+  const locationType = document.getElementById('locationType');
   
   const container = document.getElementById("results");
   const spinner = document.getElementById("spinner");
@@ -36,7 +39,8 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
         chrome.tabs.sendMessage(currentTab.id, {
           action: "getFilteredJobs",
           keyword:keyword.value,
-          location:location.value
+          location:location.value,
+          locationType:locationType.value
         }, (jobs) => {
           if (chrome.runtime.lastError) {
             console.error("Error sending message to content script:", chrome.runtime.lastError.message);
@@ -63,7 +67,8 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
         chrome.tabs.sendMessage(currentTab.id, {
           action: "getFilteredJobs",
           keyword:keyword.value,
-          location:location.value
+          location:location.value,
+          locationType:locationType.value
         }, (visibleJobs) => {
           if (chrome.runtime.lastError) {
             console.error("Error sending message to content script:", chrome.runtime.lastError.message);
@@ -76,7 +81,8 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
           chrome.runtime.sendMessage({
             action: "scrapeHiddenJobs",
             keyword:keyword.value,
-            location:location.value
+            location:location.value,
+            locationType:locationType.value
           });
 
           // Wait for background response
@@ -108,9 +114,8 @@ document.getElementById('filterForm').addEventListener('submit', function (e) {
 
 function renderJobs(jobs) {
   const container = document.getElementById("results");
-
-  if (jobs && jobs.length > 0) {
-    const html = `<h3>Filtered Jobs</h3>`
+const html = `<h3>Filtered Jobs</h3>`
+  if (jobs && jobs.length > 0) {    
     container.innerHTML = html+ jobs.map(job => `      
       <div class="job-card">
         <img src="${job.logo}" alt="Company Logo" class="job-logo">
@@ -123,7 +128,7 @@ function renderJobs(jobs) {
       </div>
     `).join('');
   } else {
-    container.innerText = html + "No jobs matched your filter.";
+    container.innerHTML = html + "No jobs matched your filter.";
   }
 }
 

@@ -10,13 +10,26 @@
 <div class="header">
  <img src="logo.jpg" alt="LinkedLens - Smarter LinkedIn Job Filters" class="logo" />
 </div>
-    <form id="filterForm">
-        <label for="keyword">Keyword:</label>
-        <input type="text" id="keyword" name="keyword" placeholder="e.g. Developer">
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" placeholder="e.g. City">
-        <button type="submit">Apply Filters</button>
-    </form>   
+    
+<form id="filterForm">
+  <label for="keyword">Keyword:</label>
+  <input type="text" id="keyword" name="keyword" placeholder="e.g. Developer" autocomplete="off">
+
+  <label for="location">Location:</label>
+  <input type="text" id="location" name="location" placeholder="e.g. City" autocomplete="off">
+ 
+<label for="locationType">Location Type:</label>
+<select id="locationType" name="locationType">
+  <option value="">e.g. Hybrid</option>
+  <option value="Remote">Remote</option>
+  <option value="Hybrid">Hybrid</option>
+  <option value="On-site">On-site</option>
+</select>
+
+
+  <button type="submit">Apply Filters</button>
+</form>
+
 
 
 <div id="spinner" style="display: none; text-align: center; margin-top: 10px;">

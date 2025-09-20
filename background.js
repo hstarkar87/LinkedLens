@@ -6,7 +6,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "scrapeHiddenJobs") {
     pendingFilters = {
       keyword: message.keyword || "",
-      location: message.location || ""
+      location: message.location || "",
+      locationType: message.locationType || ""
     };
 
     console.log("Opening new tab to scrape jobs with filters:", pendingFilters);

@@ -1,9 +1,11 @@
+/* Base layout */
 body {
     font-family: Arial, sans-serif;
     padding: 15px;
     background-color: #ffffff;
     color: #333;
     width: 250px;
+    box-sizing: border-box;
 }
 
 h2 {
@@ -15,19 +17,25 @@ h2 {
 form {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
+/* Form elements */
 label {
     margin-top: 10px;
     font-weight: bold;
 }
 
-input, select {
+input[type="text"],
+.dropdown-input {
+    width: 100%;
     padding: 8px;
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
+    background-color: #fff;
+    box-sizing: border-box;
 }
 
 button {
@@ -45,60 +53,118 @@ button:hover {
     background-color: #005582;
 }
 
+/* Dropdown styling */
+
+
+.filter-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.dropdown-container {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-input {
+    cursor: pointer;
+}
+
+.dropdown-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 10;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.dropdown-options label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.dropdown-container.open .dropdown-options {
+    display: block;
+}
+
+/* Job card styles (unchanged) */
 .job-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  background-color: #fff;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fff;
 }
 
 .job-logo {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
 }
 
 .job-details {
-  flex: 1;
+    flex: 1;
 }
 
 .job-details h3 {
-  margin: 0;
-  font-size: 1.1em;
+    margin: 0;
+    font-size: 1.1em;
 }
 
 .job-details a {
-  text-decoration: none;
-  color: #0073b1; /* LinkedIn blue */
+    text-decoration: none;
+    color: #0073b1;
 }
 
 .job-details p,
 .job-details small {
-  margin: 4px 0;
-  color: #555;
+    margin: 4px 0;
+    color: #555;
 }
 
 .header {
-  text-align: center;
-  margin-top: 10px;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .logo {
-  width: 100%;
-  height: 100%;
-  margin-bottom: 10px;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 10px;
 }
 
- 
-
 .error {
-    border: 2px solid red;
-    background-color: #ffe6e6;
-  }
+    border: 2px solid red !important;
+    background-color: #ffe6e6 !important;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+
+input, select {
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
 
 
 

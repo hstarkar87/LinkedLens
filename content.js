@@ -3,7 +3,7 @@ function getFilteredJobs(message) {
   try {
     console.log("Filtering jobs with criteria:", message);
     const jobCards = document.querySelectorAll('.job-card-container');
-    const { keyword, location } = message;
+    const { keyword, location, locationType } = message;
 
     console.log("Total job cards found:", jobCards.length);
 
@@ -18,9 +18,10 @@ function getFilteredJobs(message) {
       const CompanyAndLocation = company +", "+ locationInfo;
       const matchesKeyword = keyword ? title?.toLowerCase().includes(keyword.toLowerCase()) : true;
       const matchesLocation = location ? CompanyAndLocation?.toLowerCase().includes(location.toLowerCase()) : true;
+      const matchesLocationType = locationType ? CompanyAndLocation?.toLowerCase().includes(locationType.toLowerCase()) : true;
       const matchesExperience = true; // Placeholder for future logic
 
-      if (!(matchesKeyword && matchesLocation && matchesExperience)) {
+      if (!(matchesKeyword && matchesLocation && matchesExperience && matchesLocationType)) {
         return null;
       }
 
